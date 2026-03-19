@@ -4,11 +4,16 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dev:registration": "tsx watch registration-server/src/index.ts",
     "start": "tsx src/index.ts",
+    "start:registration": "tsx registration-server/src/index.ts",
     "lint": "eslint src/",
-    "typecheck": "tsc --noEmit"
+    "lint:registration": "eslint registration-server/src/",
+    "typecheck": "tsc --noEmit",
+    "typecheck:registration": "tsc --noEmit -p registration-server/tsconfig.json"
   },
   "dependencies": {
+    "@fastify/rate-limit": "^10.0.0",
     "bullmq": "^5.0.0",
     "fastify": "^5.0.0",
     "ioredis": "^5.0.0"

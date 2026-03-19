@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import { BulkRequest, BulkResponse } from './types.js';
-import { UserRegistration } from './services/UserRegistration.js';
+import { config } from './config/index.js';
+import { UserRegistrationClient } from './services/UserRegistrationClient.js';
 import { EmailService } from './services/EmailService.js';
 
 const fastify = Fastify({ logger: true });
@@ -11,7 +12,7 @@ fastify.post<{ Body: BulkRequest }>('/users/bulk', async (request, reply) => {
   const { data: users, callbackEmail } = request.body;
 
   for (const user of users) {
-    await UserRegistration.register(user);
+    await UserRegistrationClient.register(user);
   }
 
   await EmailService.sendResult(callbackEmail);
@@ -26,7 +27,7 @@ fastify.post<{ Body: BulkRequest }>('/users/bulk', async (request, reply) => {
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 3000 });
+    await fastify.listen(config.servers.main);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

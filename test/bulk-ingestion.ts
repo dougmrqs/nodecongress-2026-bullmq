@@ -24,7 +24,7 @@ const response = await fetch(`${SERVER_URL}/users/bulk`, {
 const elapsed = Date.now() - startTime;
 const result = await response.json();
 
-console.log(`Status: ${response.status} (Accepted)`);
+console.log(`Status: ${response.status} ${response.statusText}`);
 console.log(`Response:`, result);
 console.log(`Total time: ${elapsed}ms`);
 console.log(`Average per user: ${elapsed / USER_COUNT}ms`);
