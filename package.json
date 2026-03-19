@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
     "dev": "tsx watch src/index.ts",
     "dev:registration": "tsx watch registration-server/src/index.ts",
     "start": "tsx src/index.ts",
