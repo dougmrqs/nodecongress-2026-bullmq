@@ -9,6 +9,7 @@
     "dev:registration": "tsx watch registration-server/src/index.ts",
     "start": "tsx src/index.ts",
     "start:registration": "tsx registration-server/src/index.ts",
+    "format": "prettier --write .",
     "lint": "eslint src/",
     "lint:registration": "eslint registration-server/src/",
     "typecheck": "tsc --noEmit",

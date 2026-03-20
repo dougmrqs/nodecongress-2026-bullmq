@@ -20,7 +20,6 @@ const response = await fetch(`${SERVER_URL}/users/bulk`, {
   }),
 });
 
-
 const elapsed = Date.now() - startTime;
 const result = await response.json();
 

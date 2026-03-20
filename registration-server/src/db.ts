@@ -20,9 +20,13 @@ db.exec(`
 
 export const userRepository = {
   create(user: Omit<User, 'id' | 'createdAt'>): User {
-    const stmt = db.prepare('INSERT INTO users (username, email) VALUES (?, ?)');
+    const stmt = db.prepare(
+      'INSERT INTO users (username, email) VALUES (?, ?)',
+    );
     const result = stmt.run(user.username, user.email);
-    const row = db.prepare('SELECT * FROM users WHERE id = ?').get(result.lastInsertRowid) as unknown as User;
+    const row = db
+      .prepare('SELECT * FROM users WHERE id = ?')
+      .get(result.lastInsertRowid) as unknown as User;
     return row;
   },
 };
