@@ -1,19 +1,37 @@
 import Fastify from 'fastify';
 import { BulkRequest, BulkResponse } from './types.js';
 import { config } from './config/index.js';
-import { UserRegistrationClient } from './services/UserRegistrationClient.js';
 import { EmailService } from './services/EmailService.js';
+import { userQueue } from './queue.js';
+import { createBullBoard } from '@bull-board/api';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { FastifyAdapter } from '@bull-board/fastify';
 
 const fastify = Fastify({ logger: true });
+
+const serverAdapter = new FastifyAdapter();
+
+createBullBoard({
+  queues: [new BullMQAdapter(userQueue)],
+  serverAdapter,
+});
+
+await fastify.register(serverAdapter.registerPlugin(), { prefix: '/queues' });
+
+fastify.decorate('queue', userQueue);
 
 fastify.get('/health', async () => ({ status: 'ok' }));
 
 fastify.post<{ Body: BulkRequest }>('/users/bulk', async (request, reply) => {
   const { data: users, callbackEmail } = request.body;
 
-  for (const user of users) {
-    await UserRegistrationClient.register(user);
-  }
+  const userJobs = users.map((user) => ({
+    name: config.queue.job.name,
+    data: user,
+  }));
+
+  console.log(`Adding ${userJobs.length} jobs to the queue`);
+  await userQueue.addBulk(userJobs);
 
   await EmailService.sendResult(callbackEmail);
 

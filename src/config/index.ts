@@ -14,4 +14,10 @@ export const config = {
       baseUrl: 'http://localhost:3001',
     },
   },
+  queue: {
+    name: 'user-registration',
+    job: {
+      name: 'register-user',
+    },
+  },
 };

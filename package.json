@@ -7,6 +7,7 @@
     "docker:down": "docker compose down",
     "dev": "tsx watch src/index.ts",
     "dev:registration": "tsx watch registration-server/src/index.ts",
+    "dev:worker": "tsx watch src/worker.ts",
     "start": "tsx src/index.ts",
     "start:registration": "tsx registration-server/src/index.ts",
     "format": "prettier --write .",
@@ -16,6 +17,7 @@
     "typecheck:registration": "tsc --noEmit -p registration-server/tsconfig.json"
   },
   "dependencies": {
+    "@bull-board/fastify": "^6.0.0",
     "@fastify/rate-limit": "^10.0.0",
     "bullmq": "^5.0.0",
     "fastify": "^5.0.0",
