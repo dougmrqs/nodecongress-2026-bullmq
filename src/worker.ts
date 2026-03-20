@@ -13,6 +13,7 @@ export const userWorker = new Worker<User>(config.queue.name, jobHandler, {
     host: config.redis.host,
     port: config.redis.port,
   },
+  concurrency: 30,
 });
 
 userWorker.on('failed', (job, err) => {

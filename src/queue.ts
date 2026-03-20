@@ -6,4 +6,11 @@ export const userQueue = new Queue(config.queue.name, {
     host: config.redis.host,
     port: config.redis.port,
   },
+  defaultJobOptions: {
+    attempts: 5,
+    backoff: {
+      type: 'exponential',
+      delay: 1000,
+    },
+  },
 });
