@@ -1,6 +1,13 @@
 import { User } from '../types.js';
 import { config } from '../config/index.js';
 
+export class TooManyRequestError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TooManyRequestError';
+  }
+}
+
 export const UserRegistrationClient = {
   async register(user: User): Promise<{ success: boolean }> {
     const response = await fetch(
@@ -13,6 +20,10 @@ export const UserRegistrationClient = {
     );
 
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new TooManyRequestError('Too many requests');
+      }
+
       throw new Error(
         `Registration failed: ${response.status} -- ${response.statusText}`,
       );
