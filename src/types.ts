@@ -12,3 +12,7 @@ export interface BulkResponse {
   accepted: boolean;
   callbackEmail: string;
 }
+
+export interface BulkRegistrationParentData {
+  callbackEmail: string;
+}

@@ -1,5 +1,12 @@
-import { Queue } from 'bullmq';
+import { Queue, FlowProducer } from 'bullmq';
 import { config } from './config/index.js';
+
+export const flowProducer = new FlowProducer({
+  connection: {
+    host: config.redis.host,
+    port: config.redis.port,
+  },
+});
 
 export const userQueue = new Queue(config.queue.name, {
   connection: {

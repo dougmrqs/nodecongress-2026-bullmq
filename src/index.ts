@@ -1,8 +1,7 @@
 import Fastify from 'fastify';
 import { BulkRequest, BulkResponse } from './types.js';
 import { config } from './config/index.js';
-import { EmailService } from './services/EmailService.js';
-import { userQueue } from './queue.js';
+import { userQueue, flowProducer } from './queue.js';
 import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { FastifyAdapter } from '@bull-board/fastify';
@@ -30,15 +29,17 @@ fastify.get('/health', async () => ({ status: 'ok' }));
 fastify.post<{ Body: BulkRequest }>('/users/bulk', async (request, reply) => {
   const { data: users, callbackEmail } = request.body;
 
-  const userJobs = users.map((user) => ({
-    name: config.queue.job.name,
-    data: user,
-  }));
-
-  console.log(`Adding ${userJobs.length} jobs to the queue`);
-  await userQueue.addBulk(userJobs);
-
-  await EmailService.sendResult(callbackEmail);
+  console.log(`Creating flow with ${users.length} user registrations`);
+  await flowProducer.add({
+    name: config.queue.flowName,
+    queueName: config.queue.name,
+    data: { callbackEmail },
+    children: users.map((user) => ({
+      name: config.queue.job.name,
+      queueName: config.queue.name,
+      data: user,
+    })),
+  });
 
   const response: BulkResponse = {
     accepted: true,

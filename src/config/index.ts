@@ -19,6 +19,9 @@ export const config = {
     job: {
       name: 'register-user',
     },
+    flow: {
+      name: 'bulk-registration',
+    },
   },
   worker: {
     concurrency: 30,
