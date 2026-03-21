@@ -22,5 +22,9 @@ export const config = {
   },
   worker: {
     concurrency: 30,
+    rateLimit: {
+      max: 10,
+      duration: 1000, // 1 second
+    }
   }
 };

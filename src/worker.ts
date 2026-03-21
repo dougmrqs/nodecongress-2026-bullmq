@@ -29,6 +29,10 @@ export const userWorker = new Worker<User>(config.queue.name, jobHandler, {
     port: config.redis.port,
   },
   concurrency: config.worker.concurrency,
+  limiter: {
+    max: config.worker.rateLimit.max,
+    duration: config.worker.rateLimit.duration,
+  }
 });
 
 userWorker.on('failed', (job, err) => {
