@@ -1,11 +1,26 @@
-import { Worker } from 'bullmq';
-import { User } from './types.js';
+import { Worker, Job, DelayedError } from 'bullmq';
 import { config } from './config/index.js';
-import { UserRegistrationClient } from './services/UserRegistrationClient.js';
+import {
+  UserRegistrationClient,
+  TooManyRequestError,
+} from './services/UserRegistrationClient.js';
+import { User } from './types.js';
 
-async function jobHandler(job: { data: User }) {
+async function jobHandler(job: Job<User>, token?: string) {
   console.log(`[Worker] Registering user: ${job.data.username}`);
-  return await UserRegistrationClient.register(job.data);
+  try {
+    return await UserRegistrationClient.register(job.data);
+  } catch (err) {
+    if (err instanceof TooManyRequestError) {
+
+      console.log(
+        `[Worker] Rate limited: ${job.data.username}, delaying retry`,
+      );
+      await job.moveToDelayed(Date.now() + 5000, token ?? '');
+      throw new DelayedError();
+    }
+    throw err;
+  }
 }
 
 export const userWorker = new Worker<User>(config.queue.name, jobHandler, {
@@ -13,7 +28,7 @@ export const userWorker = new Worker<User>(config.queue.name, jobHandler, {
     host: config.redis.host,
     port: config.redis.port,
   },
-  concurrency: 30,
+  concurrency: config.worker.concurrency,
 });
 
 userWorker.on('failed', (job, err) => {

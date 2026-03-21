@@ -20,4 +20,7 @@ export const config = {
       name: 'register-user',
     },
   },
+  worker: {
+    concurrency: 30,
+  }
 };
