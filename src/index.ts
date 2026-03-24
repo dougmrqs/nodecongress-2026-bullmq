@@ -14,6 +14,11 @@ const serverAdapter = new FastifyAdapter();
 createBullBoard({
   queues: [new BullMQAdapter(userQueue)],
   serverAdapter,
+  options: {
+    uiConfig: {
+      locale: { lng: 'en' },
+    }
+  }
 });
 
 await fastify.register(serverAdapter.registerPlugin(), { prefix: '/queues' });
